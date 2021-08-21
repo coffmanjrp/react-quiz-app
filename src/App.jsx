@@ -1,31 +1,45 @@
+import { useState } from 'react';
+import Question from './components/Question';
+import Result from './components/Result';
+import quizData from './data/quizData';
 import './App.scss';
 
 function App() {
+  const [data] = useState(quizData);
+  const [index, setIndex] = useState(0);
+  const [answer, setAnswer] = useState('');
+  const [score, setScore] = useState(0);
+
+  const handleQuiz = () => {
+    if (answer === data[index].correct) setScore((score) => score + 1);
+    if (index < data.length) setIndex((prev) => prev + 1);
+    setAnswer('');
+  };
+
+  const handleChange = (e) => {
+    setAnswer(e.target.value);
+  };
+
+  const handleReset = () => {
+    setIndex(0);
+    setAnswer('');
+    setScore(0);
+  };
+
   return (
     <div className="App">
       <div className="quiz-container">
-        <div className="quiz-header">
-          <h2>Question text</h2>
-          <ul>
-            <li>
-              <input type="radio" name="answer" id="a" className="answer" />
-              <label htmlFor="a"> Question</label>
-            </li>
-            <li>
-              <input type="radio" name="answer" id="b" className="answer" />
-              <label htmlFor="b"> Question</label>
-            </li>
-            <li>
-              <input type="radio" name="answer" id="c" className="answer" />
-              <label htmlFor="c"> Question</label>
-            </li>
-            <li>
-              <input type="radio" name="answer" id="d" className="answer" />
-              <label htmlFor="d"> Question</label>
-            </li>
-          </ul>
-        </div>
-        <button>Submit</button>
+        {index >= data.length ? (
+          <Result data={data} score={score} handleReset={handleReset} />
+        ) : (
+          <Question
+            data={data}
+            index={index}
+            answer={answer}
+            handleChange={handleChange}
+            handleQuiz={handleQuiz}
+          />
+        )}
       </div>
     </div>
   );
